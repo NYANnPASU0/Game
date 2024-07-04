@@ -5,6 +5,12 @@
 #include <vector>
 #include <set>
 #include <string>
+#include <sstream>
+#include<list>
+#include "Ground.h"
+#include "Coins.h"
+#include <Windows.h>
+#include <MMSystem.h>
 
 using namespace sf;
 
@@ -183,7 +189,6 @@ bool rectangles_main_menu(RenderWindow& win, int& selectedMenuItem, Clock& clock
         if (event.key.code == Keyboard::Enter)
         {
             GAME_START_MENU = false;
-            /*starting_game(win,main_menu,clock);*/
             return GAME_START_MENU;
         }
         settings_visible = false;
@@ -263,17 +268,98 @@ int main()
     Clock clock;
     bool GAME_START_MENU = true;
 
+    Texture sonic;
+    sonic.loadFromFile("assets/sonic_square.png");
+
+    Texture ground_texture;
+    ground_texture.loadFromFile("assets/groundTile.png");
+
+    Texture wall_texture;
+    wall_texture.loadFromFile("assets/WallSprite.png");
+
+    std::vector<Ground>Ground_Green_Hill_Zone;
+    //_____________________________________________________________________________
+    Font font_for_all;
+    if (!font_for_all.loadFromFile("font/font_for_rings.ttf")) return 5;
+    //_____________________________________________________________________________
+    //кольца--------------------------------------------------------------------------
+    Texture rings;
+    rings.loadFromFile("assets/ring.png");
+    Coin coin1(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin2(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin3(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin4(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin5(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin6(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin7(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin8(Coin(&rings, Vector2f(50.0f, 50.0f)));
+
+
+    std::vector<Coin*>Rings_Green_Hill_Zone;
+    Rings_Green_Hill_Zone.push_back(&coin1);
+    Rings_Green_Hill_Zone.push_back(&coin2);
+    Rings_Green_Hill_Zone.push_back(&coin3);
+    Rings_Green_Hill_Zone.push_back(&coin4);
+    Rings_Green_Hill_Zone.push_back(&coin5);
+    Rings_Green_Hill_Zone.push_back(&coin6);
+    Rings_Green_Hill_Zone.push_back(&coin7);
+    Rings_Green_Hill_Zone.push_back(&coin8);
+
+    int rings_count = 0;
+
+    Text text_Rings;
+    text_Rings.setFont(font_for_all);
+    text_Rings.setFillColor(Color::Yellow);
+    text_Rings.setString("RINGS:");
+    text_Rings.setPosition(40, 20);
+
+    Text text_rings_count;
+    text_rings_count.setFont(font_for_all);
+    text_rings_count.setFillColor(Color::White); 
+    std::ostringstream ssRings;
+    ssRings << rings_count;
+    text_rings_count.setString(ssRings.str());
+    text_rings_count.setPosition(text_Rings.getGlobalBounds().width + text_Rings.getPosition().x + 30, 20);
 
 
 
 
 
+    //время и скорость ---------------------------------------------------
+    int increSecs = 0;
+    int secs = 0;
+    int mins = 0;
+    int score = 0;
 
+    Text text_score;
+    text_score.setFont(font_for_all);
+    text_score.setFillColor(Color::Yellow);
+    text_score.setString("SCORE:");
+    text_score.setPosition(40, 60);
+
+    Text text_score_board;
+    text_score_board.setFont(font_for_all);
+    text_score_board.setFillColor(Color::White);
+    std::ostringstream ssScore;
+    ssScore << score;
+    text_score_board.setString(ssScore.str());
+    text_score_board.setPosition(text_score.getGlobalBounds().width + text_score.getPosition().x + 30, 60);
+
+    //жизни--------------------------------------------------------------
+    int lives = 3;
+    Text text_live;
+    std::ostringstream ssLives;
+    ssLives << "LIVES:" << lives;
+    text_live.setFont(font_for_all);
+    text_live.setFillColor(Color::White);
+    text_live.setString(ssLives.str());
+    text_live.setPosition(40, 600);
 
     while (win.isOpen())
     {
         while (win.pollEvent(event))
         {
+            if (event.type == Event::Closed) win.close();
             if (GAME_START_MENU)
             {
 
@@ -291,6 +377,11 @@ int main()
                 {
                     green_hill_zone.play();
                 }
+                win.draw(text_Rings);
+                win.draw(text_rings_count);
+                win.draw(text_score);
+                win.draw(text_score_board);
+                win.draw(text_live);
                 win.display();
             }
         }
