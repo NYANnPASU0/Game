@@ -1,6 +1,10 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/System/Clock.hpp>
+#include <iostream>
+#include <vector>
+#include <set>
+#include <string>
 
 using namespace sf;
 
@@ -8,28 +12,10 @@ Image icon, sonic_sprite;
 Texture texture;
 Sprite player;
 
-RenderWindow win(VideoMode(1280, 720), "Sonic the Hedgehog");
+RenderWindow win(VideoMode(960, 672), "Sonic the Hedgehog");
 Event event;
 Music main_menu;
 bool settings_visible = false;
-
-struct TextFormat
-{
-    int size_type = 60; //размер шрифта
-    Color color_of_text_menu = Color::White;
-    float bord = 0.0f;
-    Color border_color = Color::Black;
-};
-
-void Init_Text(Text& mtext, float xpos, float ypos, const String str, TextFormat Ftext) //функция выбора меню
-{
-    mtext.setCharacterSize(Ftext.size_type);
-    mtext.setPosition(xpos, ypos);
-    mtext.setString(str);
-    mtext.setFillColor(Ftext.color_of_text_menu);
-    mtext.setOutlineThickness(Ftext.bord);
-    mtext.setOutlineColor(Ftext.border_color);
-}
 
 void open_image_while_exit() //функция для мема с соником при выходе их игры
 {
@@ -124,46 +110,46 @@ void zone_checkpoint(RenderWindow& win, Music& main_menu, bool& settings_visible
     win.draw(checkpoint6);
 }
 
-void rectangles_main_menu(RenderWindow& win, int& selectedMenuItem, Clock& clock) //выбор меню
+bool rectangles_main_menu(RenderWindow& win, int& selectedMenuItem, Clock& clock, bool& GAME_START_MENU) //выбор меню
 {
     Font type;
     if (!type.loadFromFile("font/Greybeard-11px.ttf"));
 
-    RectangleShape textmenuBlock1(Vector2f(250, 50)); // размеры прямоугольника
+    RectangleShape textmenuBlock1(Vector2f(200, 45)); // размеры прямоугольника
     textmenuBlock1.setFillColor(Color(255, 255, 224)); // цвет заливки
     textmenuBlock1.setOutlineThickness(2); // толщина границы
     textmenuBlock1.setOutlineColor(Color(255, 218, 185)); // цвет границы
-    textmenuBlock1.setPosition(90, 200);
+    textmenuBlock1.setPosition(30, 200);
     Text text1;
     text1.setFont(type); // шрифт, загруженный ранее
     text1.setString(L"Start"); // текст
-    text1.setCharacterSize(24); // размер шрифта
+    text1.setCharacterSize(20); // размер шрифта
     text1.setFillColor(Color(250, 128, 114)); // цвет текста
-    text1.setPosition(120, 210);
+    text1.setPosition(50, 210);
 
-    RectangleShape textmenuBlock2(Vector2f(250, 50));
+    RectangleShape textmenuBlock2(Vector2f(200, 45));
     textmenuBlock2.setFillColor(Color(255, 255, 224));
     textmenuBlock2.setOutlineThickness(2); 
     textmenuBlock2.setOutlineColor(Color(255, 218, 185));
-    textmenuBlock2.setPosition(90, 300);
+    textmenuBlock2.setPosition(30, 280);
     Text text2;
     text2.setFont(type); 
-    text2.setString(L"Settings"); 
-    text2.setCharacterSize(24); 
+    text2.setString(L"Checkpoints"); 
+    text2.setCharacterSize(20); 
     text2.setFillColor(Color(250, 128, 114));
-    text2.setPosition(120, 310);
+    text2.setPosition(50, 290);
 
-    RectangleShape textmenuBlock3(Vector2f(250, 50)); 
+    RectangleShape textmenuBlock3(Vector2f(200, 45));
     textmenuBlock3.setFillColor(Color(255, 255, 224)); 
     textmenuBlock3.setOutlineThickness(2);
     textmenuBlock3.setOutlineColor(Color(255, 218, 185));
-    textmenuBlock3.setPosition(90, 400);
+    textmenuBlock3.setPosition(30, 360);
     Text text3;
     text3.setFont(type); 
     text3.setString(L"EXIT"); 
-    text3.setCharacterSize(24); 
+    text3.setCharacterSize(20); 
     text3.setFillColor(Color(250, 128, 114));
-    text3.setPosition(120, 410);
+    text3.setPosition(50, 370);
 
     const Time timeInterval = milliseconds(200);
 
@@ -194,6 +180,12 @@ void rectangles_main_menu(RenderWindow& win, int& selectedMenuItem, Clock& clock
         textmenuBlock1.setFillColor(Color(32, 178, 170)); // цвет заливки
         text1.setFillColor(Color(224, 255, 255)); // цвет текста
         textmenuBlock1.setOutlineColor(Color(64, 224, 208)); // цвет границы
+        if (event.key.code == Keyboard::Enter)
+        {
+            GAME_START_MENU = false;
+            /*starting_game(win,main_menu,clock);*/
+            return GAME_START_MENU;
+        }
         settings_visible = false;
         break;
     case 1:
@@ -235,19 +227,23 @@ int main()
     win.setIcon(32, 32, icon.getPixelsPtr());
     sonic_sprite.loadFromFile("Image/sonic.png");
 
-    float width = 1280;
-    float height = 720;
+    float width = 960;
+    float height = 672;
     //фон экрана меню
     RectangleShape background(Vector2f(width, height));
     Texture wallpaper_menu;
-    if (!wallpaper_menu.loadFromFile("Image/menu main.jpg")) return 4;
+    if (!wallpaper_menu.loadFromFile("Image/menu main (3).jpg")) return 4;
     background.setTexture(&wallpaper_menu);
 
     //музыка
     Music main_menu;//создаем объект музыки
     main_menu.openFromFile("themes!/Toby-Fox-Dating-Start_.ogg");
+    main_menu.setVolume(50);
     main_menu.play();
 
+    Music green_hill_zone;//создаем объект музыки
+    green_hill_zone.openFromFile("themes!/Green-Hill-Zone-Act-1.ogg");
+    green_hill_zone.setVolume(40);
 
     //шрифт для названия экрана
     Font type;
@@ -257,28 +253,47 @@ int main()
     Text titul;
     titul.setFont(type); // шрифт
     titul.setString(L"Sonic the Hedgehog"); // текст
-    titul.setCharacterSize(50); // размер шрифта
+    titul.setCharacterSize(37); // размер шрифта
     titul.setFillColor(Color(46, 210, 255)); // цвет текста
     titul.setOutlineThickness(2);
     titul.setOutlineColor(Color(0, 92, 173));
-    titul.setPosition(450, 50);
+    titul.setPosition(320, 50);
 
     static int selectedMenuItem = 0;
     Clock clock;
+    bool GAME_START_MENU = true;
+
+
+
+
+
+
+
 
     while (win.isOpen())
     {
         while (win.pollEvent(event))
         {
-            if (event.type == Event::Closed || event.key.code == Keyboard::Escape) win.close();
+            if (GAME_START_MENU)
+            {
 
+                win.clear();
+                win.draw(background);
+                win.draw(titul);
+                rectangles_main_menu(win, selectedMenuItem, clock, GAME_START_MENU);
+                win.display();
+            }
+            else
+            {
+                win.clear();
+                main_menu.stop();
+                if (green_hill_zone.getStatus() != Music::Playing)
+                {
+                    green_hill_zone.play();
+                }
+                win.display();
+            }
         }
-        win.clear();
-        win.draw(background);
-        win.draw(titul);
-        rectangles_main_menu(win, selectedMenuItem, clock);
-        win.display();
     }
-
     return 0;
 }
