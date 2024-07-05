@@ -9,6 +9,9 @@
 #include<list>
 #include "Ground.h"
 #include "Coins.h"
+#include "Collision.h"
+#include "Animation.h"
+#include "PLayer.h"
 #include <Windows.h>
 #include <MMSystem.h>
 
@@ -23,7 +26,7 @@ Event event;
 Music main_menu;
 bool settings_visible = false;
 
-void open_image_while_exit() //функция для мема с соником при выходе их игры
+void open_image_while_exit() //function for a sonic meme when their game comes out
 {
     RenderWindow imageWindow(VideoMode(390, 125), "ERROR");
     Texture imageTexture;
@@ -48,17 +51,17 @@ void open_image_while_exit() //функция для мема с соником при выходе их игры
     }
 }
 
-void zone_checkpoint(RenderWindow& win, Music& main_menu, bool& settings_visible, Clock& clock) //чекпоинты(они врядли пригодятся)
+void zone_checkpoint(RenderWindow& win, Music& main_menu, bool& settings_visible, Clock& clock) //checkpoints(they are unlikely to be useful)
 {
     Font type;
     if (!type.loadFromFile("font/Greybeard-11px.ttf"));
 
     Text checkpoint1;
-    checkpoint1.setFont(type); // шрифт, загруженный ранее
-    checkpoint1.setString(L"Green Hill Zone"); // текст
-    checkpoint1.setCharacterSize(24); // размер шрифта
-    checkpoint1.setFillColor(Color(25, 25, 112)); // цвет текста
-    checkpoint1.setOutlineThickness(3); // Установка толщины обводки
+    checkpoint1.setFont(type);
+    checkpoint1.setString(L"Green Hill Zone");
+    checkpoint1.setCharacterSize(24);
+    checkpoint1.setFillColor(Color(25, 25, 112));
+    checkpoint1.setOutlineThickness(3);
     checkpoint1.setOutlineColor(Color::White);
     checkpoint1.setPosition(750, 200);
 
@@ -116,21 +119,21 @@ void zone_checkpoint(RenderWindow& win, Music& main_menu, bool& settings_visible
     win.draw(checkpoint6);
 }
 
-bool rectangles_main_menu(RenderWindow& win, int& selectedMenuItem, Clock& clock, bool& GAME_START_MENU) //выбор меню
+bool rectangles_main_menu(RenderWindow& win, int& selectedMenuItem, Clock& clock, bool& GAME_START_MENU) //menu selection
 {
     Font type;
     if (!type.loadFromFile("font/Greybeard-11px.ttf"));
 
-    RectangleShape textmenuBlock1(Vector2f(200, 45)); // размеры прямоугольника
-    textmenuBlock1.setFillColor(Color(255, 255, 224)); // цвет заливки
-    textmenuBlock1.setOutlineThickness(2); // толщина границы
-    textmenuBlock1.setOutlineColor(Color(255, 218, 185)); // цвет границы
+    RectangleShape textmenuBlock1(Vector2f(200, 45)); // rectangle dimensions
+    textmenuBlock1.setFillColor(Color(255, 255, 224)); // fill color
+    textmenuBlock1.setOutlineThickness(2); // border thickness
+    textmenuBlock1.setOutlineColor(Color(255, 218, 185)); // border color
     textmenuBlock1.setPosition(30, 200);
     Text text1;
-    text1.setFont(type); // шрифт, загруженный ранее
-    text1.setString(L"Start"); // текст
-    text1.setCharacterSize(20); // размер шрифта
-    text1.setFillColor(Color(250, 128, 114)); // цвет текста
+    text1.setFont(type); // font downloaded previously
+    text1.setString(L"Start"); // text
+    text1.setCharacterSize(20); // font size
+    text1.setFillColor(Color(250, 128, 114)); //text color
     text1.setPosition(50, 210);
 
     RectangleShape textmenuBlock2(Vector2f(200, 45));
@@ -159,33 +162,33 @@ bool rectangles_main_menu(RenderWindow& win, int& selectedMenuItem, Clock& clock
 
     const Time timeInterval = milliseconds(200);
 
-    // Проверяем, прошло ли достаточно времени с последнего нажатия
+    // Checking whether enough time has passed since the last click
     if (event.type == Event::KeyPressed && clock.getElapsedTime() > timeInterval)
     {
         if (event.key.code == Keyboard::Up)
         {
             selectedMenuItem--;
             if (selectedMenuItem < 0)
-                selectedMenuItem = 2; // Переход к последнему элементу
+                selectedMenuItem = 2; // Move to last element
         }
         else if (event.key.code == Keyboard::Down)
         {
             selectedMenuItem++;
             if (selectedMenuItem > 2)
-                selectedMenuItem = 0; // Переход к первому элементу
+                selectedMenuItem = 0; // Go to first element
         }
-        // Сбрасываем таймер после обработки нажатия
+        // Reset the timer after processing the click
         clock.restart();
     }
 
 
-    // Изменение цвета выбранного прямоугольника
+    // Change the color of the selected rectangle
     switch (selectedMenuItem)
     {
     case 0:
-        textmenuBlock1.setFillColor(Color(32, 178, 170)); // цвет заливки
-        text1.setFillColor(Color(224, 255, 255)); // цвет текста
-        textmenuBlock1.setOutlineColor(Color(64, 224, 208)); // цвет границы
+        textmenuBlock1.setFillColor(Color(32, 178, 170)); //fill color
+        text1.setFillColor(Color(224, 255, 255)); // text color
+        textmenuBlock1.setOutlineColor(Color(64, 224, 208)); // border color
         if (event.key.code == Keyboard::Enter)
         {
             GAME_START_MENU = false;
@@ -234,13 +237,13 @@ int main()
 
     float width = 960;
     float height = 672;
-    //фон экрана меню
+    //menu screen background
     RectangleShape background(Vector2f(width, height));
     Texture wallpaper_menu;
     if (!wallpaper_menu.loadFromFile("Image/menu main (3).jpg")) return 4;
     background.setTexture(&wallpaper_menu);
 
-    //музыка
+    //misic
     Music main_menu;//создаем объект музыки
     main_menu.openFromFile("themes!/Toby-Fox-Dating-Start_.ogg");
     main_menu.setVolume(50);
@@ -250,11 +253,11 @@ int main()
     green_hill_zone.openFromFile("themes!/Green-Hill-Zone-Act-1.ogg");
     green_hill_zone.setVolume(40);
 
-    //шрифт для названия экрана
+    //font for screen title
     Font type;
     if (!type.loadFromFile("font/Greybeard-11px-Bold.ttf")) return 5;
 
-    //текст с названием
+    //text with title
     Text titul;
     titul.setFont(type); // шрифт
     titul.setString(L"Sonic the Hedgehog"); // текст
@@ -268,8 +271,19 @@ int main()
     Clock clock;
     bool GAME_START_MENU = true;
 
+
+
+
+
     Texture sonic;
     sonic.loadFromFile("assets/sonic_square.png");
+    Player player(&sonic, Vector2u(3, 3), 0.3f, 400.0f, 200.0f);
+
+    Texture sonic_lives;
+    sonic_lives.loadFromFile("assets/sonic_live_сount.png");
+
+    Texture game_over;
+    game_over.loadFromFile("assets/game_over_1_.png");
 
     Texture ground_texture;
     ground_texture.loadFromFile("assets/groundTile.png");
@@ -277,12 +291,17 @@ int main()
     Texture wall_texture;
     wall_texture.loadFromFile("assets/WallSprite.png");
 
+
+
+
+
+
     std::vector<Ground>Ground_Green_Hill_Zone;
     //_____________________________________________________________________________
     Font font_for_all;
     if (!font_for_all.loadFromFile("font/font_for_rings.ttf")) return 5;
     //_____________________________________________________________________________
-    //кольца--------------------------------------------------------------------------
+    //rings--------------------------------------------------------------------------
     Texture rings;
     rings.loadFromFile("assets/ring.png");
     Coin coin1(Coin(&rings, Vector2f(50.0f, 50.0f)));
@@ -325,7 +344,7 @@ int main()
 
 
 
-    //время и скорость ---------------------------------------------------
+    //time and speed ---------------------------------------------------
     int increSecs = 0;
     int secs = 0;
     int mins = 0;
@@ -345,7 +364,7 @@ int main()
     text_score_board.setString(ssScore.str());
     text_score_board.setPosition(text_score.getGlobalBounds().width + text_score.getPosition().x + 30, 60);
 
-    //жизни--------------------------------------------------------------
+    //lives--------------------------------------------------------------
     int lives = 3;
     Text text_live;
     std::ostringstream ssLives;
@@ -377,6 +396,14 @@ int main()
                 {
                     green_hill_zone.play();
                 }
+                Vector2f direction; //direction into player on collision func
+                for (int i = 0; i < Ground_Green_Hill_Zone.size(); i++) {
+                    Ground& ground = Ground_Green_Hill_Zone[i];
+                    if (ground.get_collider().check_collision(player.cet_collider(), direction, 1.0f)) {
+                        player.OnCollision(direction);
+                    }
+                }
+
                 win.draw(text_Rings);
                 win.draw(text_rings_count);
                 win.draw(text_score);

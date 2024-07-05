@@ -1,4 +1,5 @@
 #include "Ground.h"
+#include "Collision.h"
 #include <SFML/Graphics.hpp>
 
 Ground::Ground(Texture* texture, Vector2f size, Vector2f pos)
@@ -10,5 +11,7 @@ Ground::Ground(Texture* texture, Vector2f size, Vector2f pos)
 }
 
 void Ground::draw(RenderWindow& win) { win.draw(body); }
+
+Collision Ground::get_collider() { return Collision(body); }
 
 Ground::~Ground() { }

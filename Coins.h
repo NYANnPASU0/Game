@@ -6,6 +6,13 @@
 #include <vector>
 #include <set>
 #include <string>
+#include <sstream>
+#include<list>
+#include "Ground.h"
+#include "Coins.h"
+#include "Collision.h"
+#include <Windows.h>
+#include <MMSystem.h>
 
 using namespace sf;
 
@@ -18,4 +25,6 @@ public:
 	void draw(RenderWindow& win);
 	~Coin();
 	void set_pos(sf::Vector2f newPos);
+	Collision get_collider();
+	FloatRect get_globalbounds();
 };
