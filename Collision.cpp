@@ -8,10 +8,11 @@ Collision::Collision(RectangleShape& body) : body(body) {}
 
 Collision::~Collision() {}
 
-bool Collision::check_collision(Collision& other, Vector2f& direction, float push)
+bool Collision::check_collision(const Collision& other, Vector2f& direction, float push)
 {
-	Vector2f other_pos = other.get_position_coll();
-	Vector2f other_hs = other.get_half_size();
+	Collision other_o = other;
+	Vector2f other_pos = other_o.get_position_coll();
+	Vector2f other_hs = other_o.get_half_size();
 	Vector2f this_pos = get_position_coll();
 	Vector2f this_hs = get_half_size();
 
@@ -29,13 +30,13 @@ bool Collision::check_collision(Collision& other, Vector2f& direction, float pus
 		if ((inters_X) > (inters_Y)) {
 			if (deltaX > 0.0f) {
 				Move(inters_X * (1.0f - push), 0.0f);
-				other.Move(-inters_X * push, 0.0f);
+				other_o.Move(-inters_X * push, 0.0f);
 				direction.x = 1.0f;
 				direction.y = 0.0f;
 			}
 			else {
 				Move(-inters_X * (1.0f - push), 0.0f);
-				other.Move(inters_X * push, 0.0f);
+				other_o.Move(inters_X * push, 0.0f);
 				direction.x = -1.0f;
 				direction.y = 0.0f;
 			}
@@ -43,13 +44,13 @@ bool Collision::check_collision(Collision& other, Vector2f& direction, float pus
 		else {
 			if (deltaY > 0.0f) {
 				Move(0.0f, inters_Y * (1.0f - push));
-				other.Move(0.0f, -inters_Y * push);
+				other_o.Move(0.0f, -inters_Y * push);
 				direction.x = 0.0f;
 				direction.y = 1.0f;
 			}
 			else {
 				Move(0.0f, -inters_Y * (1.0f - push));
-				other.Move(0.0f, inters_Y * push);
+				other_o.Move(0.0f, inters_Y * push);
 				direction.x = 0.0f;
 				direction.y = -1.0f;
 			}

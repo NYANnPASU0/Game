@@ -28,7 +28,7 @@ Player::~Player() {}
 
 void Player::update(float delta_time)
 {
-	velocity.x *= 0.00f; //slowly stop moving higher is slower time to stop (aka sonics physics engine kinda)
+	velocity.x *= 0.00f;
 	if (Keyboard::isKeyPressed(Keyboard::A)) velocity.x -= speed;
 	if (Keyboard::isKeyPressed(Keyboard::D)) velocity.x += speed;
 	if (Keyboard::isKeyPressed(Keyboard::Space) && can_jump)
@@ -43,7 +43,7 @@ void Player::update(float delta_time)
 	{
 		row = 1; //movement animation
 		if (velocity.x > 0.0f) face_right = true; //face right
-		else face_right = false; //if he is NOT facing right, face left
+		else face_right = false; //face left
 	}
 	if (can_jump == false) row = 2;
 	animation.update(row, delta_time, face_right);
@@ -65,5 +65,5 @@ void Player::on_collision(Vector2f direction)
 		velocity.y = 0.0f;
 		can_jump = true; 
 	}
-	else if (direction.y > 0.0f) velocity.y = 0.0f; //colliding on the top of sonics head
+	else if (direction.y > 0.0f) velocity.y = 0.0f; 
 }

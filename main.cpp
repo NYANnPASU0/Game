@@ -27,6 +27,11 @@ Event event;
 Music main_menu;
 bool settings_visible = false;
 
+void ResizeCamera(const RenderWindow& win, View& view) {
+    float aspectRatio = float(win.getSize().x) / float(win.getSize().y);
+    view.setSize(CAMERA_HEIGHT * aspectRatio, CAMERA_HEIGHT);
+}
+
 void open_image_while_exit() //function for a sonic meme when their game comes out
 {
     RenderWindow imageWindow(VideoMode(390, 125), "ERROR");
@@ -226,6 +231,7 @@ bool rectangles_main_menu(RenderWindow& win, int& selectedMenuItem, Clock& clock
 int main()
 {
     win.setMouseCursorVisible(false);
+    win.setFramerateLimit(60);
 
     if (!icon.loadFromFile("Image/images.jpg"))
     {
@@ -251,7 +257,6 @@ int main()
 
     Music green_hill_zone;//создаем объект музыки
     green_hill_zone.openFromFile("themes!/Green-Hill-Zone-Act-1.ogg");
-    green_hill_zone.setVolume(40);
 
     //font for screen title
     Font type;
@@ -274,11 +279,15 @@ int main()
 
 
     Texture background_t;
-    background_t.loadFromFile("assets/background.png");
+    background_t.loadFromFile("assets/background.jpg");
     RectangleShape background1(Vector2f(12288, 728));
     background1.setTexture(&background_t);
     background1.setOrigin(700, 0);
 
+
+    Texture playerTexture;
+    playerTexture.loadFromFile("assets/sonic_square.png");
+    Player player(&playerTexture, Vector2u(3, 3), 0.3f, 400.0f, 200.0f);
 
 
     Texture sonic;
@@ -286,12 +295,15 @@ int main()
 
     Texture sonic_lives;
     sonic_lives.loadFromFile("assets/sonic_live_сount.png");
+    Sprite sprite_sonic_lives;
+    sprite_sonic_lives.setTexture(sonic_lives);
+    sprite_sonic_lives.setPosition(60, 610);
 
     Texture game_over;
     game_over.loadFromFile("assets/game_over_1_.png");
 
     Texture game_win;
-    game_win.loadFromFile("assets/win (1)(1).png");
+    game_win.loadFromFile("assets/GoalSign.png");
 
     Texture ground_texture;
     ground_texture.loadFromFile("assets/groundTile.png");
@@ -305,19 +317,45 @@ int main()
 
 
     std::vector <Ground> groundTiles;
-    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(0.0f, 630.0f))); //ground
-    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(1180.0f, 630.0f))); //ground
-    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(1536.0f, 768.0f))); //ground
-    //groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(2536.0f, 768.0f))); //ground
-    //groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(-55.0f, 528.0f))); //wall at start of level
-    //groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(1024.0f, 828.0f))); //wall2
-    //groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(1424.0f, 728.0f))); //wall3
-    //groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(1724.0f, 928.0f))); //wall4
-    //groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(2100.0f, 528.0f))); 
-    //groundTiles.push_back(Ground(&sonic_lives, Vector2f(96.0f, 32.0f), Vector2f(60.0f, 620.0f)));
-    //groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(-100, -402))); 
-    //groundTiles.push_back(Ground(&game_over, Vector2f(1024.0f, 728.0f), Vector2f(-100, -402))); //gamer over
-    //groundTiles.push_back(Ground(&game_win, Vector2f(1024.0f, 728.0f), Vector2f(-1000, -3820))); //gamer won 
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(0.0f, 700.0f))); //ground
+    groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(500.0f, 868.0f))); //wall
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(1090.0f, 640.0f))); //ground
+    groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(1200.0f, 700.0f))); //wall
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(2200.0f,500.0f))); //ground
+    groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(2700.0f, 735.0f))); //wall
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(3280.0f, 680.0f))); //ground
+    groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(3100.0f, 600.0f))); //wall
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(3680.0f, 680.0f))); //ground
+    //gulf
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(4950.0f, 680.0f))); //ground
+    groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(5000.0f, 740.0f))); //wall
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(5570.0f, 502.0f))); //ground
+    groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(6000.0f, 740.0f))); //wal
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(6580.0f, 680.0f))); //ground
+    groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(6500.0f, 600.0f))); //wal
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(7050.0f,365.0f))); //ground
+    groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(7550.0f, 600.0f))); //wal
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(7600.0f, 680.0f))); //ground
+    groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(7900.0f, 600.0f))); //wal
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(8500.0f, 680.0f))); //ground
+    //gulf
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(9800.0f,550.0f))); //ground
+    groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(9900.0f, 235.0f))); //wal
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(11000.0f,450.0f))); //ground
+    groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(10050.0f, 235.0f))); //wal
+    groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(10200.0f, 235.0f))); //wal 
+
+
+
+
+
+    std::vector <Enemy*> enemy_vec;
+    Enemy enemy1(Enemy(&enemy_t, Vector2f(123.0f, 90.0f), Vector2u(3, 1), 0.3f, 40.0f));
+    Enemy enemy2(Enemy(&enemy_t, Vector2f(123.0f, 90.0f), Vector2u(3, 1), 0.3f, 40.0f));
+    enemy1.set_position({900, 550});
+    enemy2.set_position({460, 550});
+    enemy_vec.push_back(&enemy1);
+    enemy_vec.push_back(&enemy2);
 
 
 
@@ -333,14 +371,90 @@ int main()
     Coin coin6(Coin(&rings, Vector2f(50.0f, 50.0f)));
     Coin coin7(Coin(&rings, Vector2f(50.0f, 50.0f)));
     Coin coin8(Coin(&rings, Vector2f(50.0f, 50.0f)));
-    coin1.set_position({300, 550});
+    Coin coin9(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin10(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin11(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin12(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin13(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin14(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin15(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin16(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin17(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin18(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin19(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin20(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin21(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin22(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin23(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin24(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin25(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin26(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin27(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin28(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin29(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin30(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin31(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin32(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin33(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin34(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin35(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin36(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin37(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin38(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin39(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin40(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin41(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin42(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin43(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin44(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    Coin coin45(Coin(&rings, Vector2f(50.0f, 50.0f)));
+
+    coin1.set_position({300, 600});
     coin2.set_position({900, 550});
     coin3.set_position({700, 550 });
     coin4.set_position({800, 550 });
-    coin5.set_position({1200, 550 });
-    coin6.set_position({1300, 550 });
-    coin7.set_position({1850, 550 });
-    coin8.set_position({1950, 550 });
+    coin5.set_position({1450, 550 });
+    coin6.set_position({1550, 550 });
+    coin7.set_position({1850, 400 });
+    coin8.set_position({1950, 400 });
+    coin9.set_position({ 2050, 400 });
+    coin10.set_position({ 2150, 400 });
+    coin11.set_position({ 2250, 400 });
+    coin12.set_position({ 2350, 400 });
+    coin13.set_position({ 2450, 400 });
+    coin14.set_position({ 2550, 400 });
+    coin15.set_position({ 2650, 400 });
+    coin16.set_position({ 2890, 600 });
+    coin17.set_position({ 3050, 300 });
+    coin18.set_position({ 3150, 300 });
+    coin19.set_position({ 3350, 580 });
+    coin20.set_position({ 3550, 580 });
+    coin21.set_position({ 3750, 580 });
+    coin22.set_position({ 3950, 580 });
+    coin23.set_position({ 4330, 390 });
+    coin24.set_position({ 4630, 580 });
+    coin25.set_position({ 4780, 580 });
+    coin26.set_position({ 5200, 400 });
+    coin27.set_position({ 5400, 400 });
+    coin28.set_position({ 5600, 400 });
+    coin29.set_position({ 5800, 400 });
+    coin30.set_position({ 6200, 580 });
+    coin31.set_position({ 6350, 580 });
+    coin32.set_position({ 6600, 290 });
+    coin33.set_position({ 6800, 290 });
+    coin34.set_position({ 7000, 290 });
+    coin35.set_position({ 7200, 290 });
+    coin36.set_position({ 7400, 290 });
+    coin37.set_position({ 7900, 290 });
+    coin38.set_position({ 8100, 600 });
+    coin39.set_position({ 8300, 600 });
+    coin40.set_position({ 8500, 600 });
+    coin41.set_position({ 8700, 600 });
+    coin42.set_position({ 8900, 600 });
+    coin43.set_position({ 9100, 520 });
+    coin44.set_position({ 9500, 480 });
+    coin45.set_position({ 9600, 480 });
+
     rings_vect.push_back(&coin1);
     rings_vect.push_back(&coin2);
     rings_vect.push_back(&coin3);
@@ -349,7 +463,50 @@ int main()
     rings_vect.push_back(&coin6);
     rings_vect.push_back(&coin7);
     rings_vect.push_back(&coin8);
-
+    rings_vect.push_back(&coin9);
+    rings_vect.push_back(&coin10);
+    rings_vect.push_back(&coin11);
+    rings_vect.push_back(&coin12);
+    rings_vect.push_back(&coin13);
+    rings_vect.push_back(&coin14);
+    rings_vect.push_back(&coin15);
+    rings_vect.push_back(&coin16);
+    rings_vect.push_back(&coin17);
+    rings_vect.push_back(&coin18);
+    rings_vect.push_back(&coin19);
+    rings_vect.push_back(&coin20);
+    rings_vect.push_back(&coin21);
+    rings_vect.push_back(&coin22);
+    rings_vect.push_back(&coin23);
+    rings_vect.push_back(&coin24);
+    rings_vect.push_back(&coin25);
+    rings_vect.push_back(&coin26);
+    rings_vect.push_back(&coin27);
+    rings_vect.push_back(&coin28);
+    rings_vect.push_back(&coin29);
+    rings_vect.push_back(&coin30);
+    rings_vect.push_back(&coin31);
+    rings_vect.push_back(&coin32);
+    rings_vect.push_back(&coin33);
+    rings_vect.push_back(&coin34);
+    rings_vect.push_back(&coin35);
+    rings_vect.push_back(&coin36);
+    rings_vect.push_back(&coin37);
+    rings_vect.push_back(&coin38);
+    rings_vect.push_back(&coin39);
+    rings_vect.push_back(&coin40);
+    rings_vect.push_back(&coin41);
+    rings_vect.push_back(&coin42);
+    rings_vect.push_back(&coin43);
+    rings_vect.push_back(&coin44);
+    rings_vect.push_back(&coin45);
+    SoundBuffer coin_buffer;
+    Sound coin_sound;
+    if (!coin_buffer.loadFromFile("themes!/collecting-coins.wav"))
+    {
+        std::cout << "Не удалось загрузить звук сбора монет." << std::endl;
+    }
+    coin_sound.setBuffer(coin_buffer);
 
     //_____________________________________________________________________________
     Font font_for_all;
@@ -401,8 +558,7 @@ int main()
     text_live.setPosition(72, 610);
 
     View view(Vector2f(0.0f, 0.0f), Vector2f(CAMERA_HEIGHT, CAMERA_HEIGHT * 0.7));
-    view.setCenter(Vector2f(width / 2, height / 2));
-
+    bool volume_set = true;
     while (win.isOpen())
     {
         while (win.pollEvent(event))
@@ -421,25 +577,130 @@ int main()
             {
                 win.clear();
                 main_menu.stop();
+                deltaTime = clock.restart().asSeconds();
+                if (deltaTime > 1.0f / 20.0f)
+                    deltaTime = 1.0f / 20.0f;
+                player.update(deltaTime);
+                if (event.type == Event::Resized)
+                    ResizeCamera(win, view);
                 if (green_hill_zone.getStatus() != Music::Playing)
                 {
                     green_hill_zone.play();
+                };
+                green_hill_zone.setVolume(70);
+                Vector2f direction;
+                for (Ground& ground : groundTiles) {
+                    if (ground.get_collider().check_collision(player.GetCollider(), direction, 1.0f)) {
+                        player.on_collision(direction);
+                    }
+                }
+                for (Coin* rings : rings_vect) {
+                    if (rings->get_collider().check_collision(player.GetCollider(), direction, 1.0f)) {
+                        player.on_collision(direction);
+                        rings_count = rings_count + 1;
+                        rings->set_position({
+                            1000,
+                            4002
+                            }); //throws coin away
+                        coin_sound.play();
+                        coin_sound.setVolume(100);
+                    }
+                    ssRings.str("");
+                    ssRings << "RINGS: " << rings_count;
+                    text_rings_count.setString(ssRings.str());
+                }
+
+                for (Enemy* enemies : enemy_vec) {
+                    enemies->update(deltaTime);
+
+                    for (Ground& ground : groundTiles) {
+                        if (ground.get_collider().check_collision(enemies->get_collider(), direction, 1.0f)) {
+                            enemies->on_collision(direction);
+                        }
+                    }
+                    if (enemies->get_collider().check_collision(player.GetCollider(), direction, 1.0f)) {
+                        if (player.can_jump == false) {
+                            player.on_collision(direction);
+                            score = score + 100;
+                            enemies->set_position({
+                                1000,
+                                4002
+                                }); //throws enemy away
+                        }
+                        else {
+                            player.on_collision(direction);
+                            score = 0;
+                            player.setPos({
+                                0,
+                                685
+                                });
+                            lives = lives - 1;
+                        }
+                    }
+                    ssScore.str("");
+                    ssScore << "SCORE: " << score;
+                    text_score_board.setString(ssScore.str());
+                    ssLives.str("");
+                    ssLives << lives;
+                    text_live.setString(ssLives.str());
+                }
+                if (increSecs <= 60) {
+                    increSecs++;
+                }
+                if (increSecs == 60) {
+                    secs = secs + 1;
+                    increSecs = 0;
+                }
+                if (secs == 60) {
+                    mins = mins + 1;
+                    secs = 0;
+                }
+                std::string m = std::to_string(mins);
+                std::string s = std::to_string(secs);
+
+                std::string timer = m + ":" + s;
+                if (rings_count == 50) {
+                    player.setPos({
+                        -1000,
+                        -3820
+                        });
+
+                }
+                std::ostringstream ssTime;
+                ssTime << "TIME: " << timer;
+                Text time;
+                time.setFont(font_for_all);
+                time.setFillColor(Color::Yellow);
+                time.setString(ssTime.str());
+                time.setPosition(-125.0f, 650.0f);
+                if (lives <= 0) {
+                    player.game_over = 1;
+                    player.setPos({
+                        -100,
+                        -382
+                        }); //throws player away
                 }
                 win.setView(view);
+                view.setCenter(player.get_pos());
                 win.draw(background1);
-                for (std::vector<Coin*>::iterator it = rings_vect.begin(); it != rings_vect.end(); ++it)
+                for (std::vector<Enemy*>::iterator it = enemy_vec.begin(); it != enemy_vec.end(); it++)
                 {
                     (*it)->Draw(win);
                 }
-                for (std::vector<Ground>::iterator it = groundTiles.begin(); it != groundTiles.end(); ++it)
+                for (std::vector<Coin*>::iterator it = rings_vect.begin(); it != rings_vect.end(); it++)
+                {
+                    (*it)->Draw(win);
+                }
+                for (std::vector<Ground>::iterator it = groundTiles.begin(); it != groundTiles.end(); it++)
                 {
                     it->Draw(win);
                 }
+                player.Draw(win);
+                win.draw(time);
                 win.draw(text_score_board);
                 win.draw(text_rings_count);
                 win.draw(text_live);
                 win.display();
-
             }
         }
     }

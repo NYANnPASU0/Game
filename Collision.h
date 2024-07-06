@@ -21,7 +21,7 @@ private:
 public:
 	Collision(RectangleShape& body);
 	~Collision();
-	bool check_collision(Collision& other, Vector2f& direction, float push);
+	bool check_collision(const Collision& other, Vector2f& direction, float push);
 	void Move(float dx, float dy)
 	{
 		body.move(dx, dy);
