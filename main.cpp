@@ -68,7 +68,7 @@ void zone_checkpoint(RenderWindow& win, Music& main_menu, bool& settings_visible
     checkpoint1.setFillColor(Color(25, 25, 112));
     checkpoint1.setOutlineThickness(3);
     checkpoint1.setOutlineColor(Color::White);
-    checkpoint1.setPosition(750, 200);
+    checkpoint1.setPosition(650, 200);
 
 
     Text checkpoint2;
@@ -78,7 +78,7 @@ void zone_checkpoint(RenderWindow& win, Music& main_menu, bool& settings_visible
     checkpoint2.setFillColor(Color(25, 25, 112));
     checkpoint2.setOutlineThickness(3);
     checkpoint2.setOutlineColor(Color::White);
-    checkpoint2.setPosition(750, 250);
+    checkpoint2.setPosition(650, 250);
 
     Text checkpoint3;
     checkpoint3.setFont(type);
@@ -87,7 +87,7 @@ void zone_checkpoint(RenderWindow& win, Music& main_menu, bool& settings_visible
     checkpoint3.setFillColor(Color(25, 25, 112)); 
     checkpoint3.setOutlineThickness(3);
     checkpoint3.setOutlineColor(Color::White);
-    checkpoint3.setPosition(750, 300);
+    checkpoint3.setPosition(650, 300);
 
     Text checkpoint4;
     checkpoint4.setFont(type); 
@@ -96,7 +96,7 @@ void zone_checkpoint(RenderWindow& win, Music& main_menu, bool& settings_visible
     checkpoint4.setFillColor(Color(25, 25, 112)); 
     checkpoint4.setOutlineThickness(3); 
     checkpoint4.setOutlineColor(Color::White);
-    checkpoint4.setPosition(750, 350);
+    checkpoint4.setPosition(650, 350);
 
     Text checkpoint5;
     checkpoint5.setFont(type); 
@@ -105,7 +105,7 @@ void zone_checkpoint(RenderWindow& win, Music& main_menu, bool& settings_visible
     checkpoint5.setFillColor(Color(25, 25, 112)); 
     checkpoint5.setOutlineThickness(3); 
     checkpoint5.setOutlineColor(Color::White);
-    checkpoint5.setPosition(750, 400);
+    checkpoint5.setPosition(650, 400);
 
     Text checkpoint6;
     checkpoint6.setFont(type); 
@@ -114,7 +114,7 @@ void zone_checkpoint(RenderWindow& win, Music& main_menu, bool& settings_visible
     checkpoint6.setFillColor(Color(25, 25, 112)); 
     checkpoint6.setOutlineThickness(3); 
     checkpoint6.setOutlineColor(Color::White);
-    checkpoint6.setPosition(750, 450);
+    checkpoint6.setPosition(650, 450);
 
     win.draw(checkpoint1);
     win.draw(checkpoint2);
@@ -231,7 +231,7 @@ bool rectangles_main_menu(RenderWindow& win, int& selectedMenuItem, Clock& clock
 int main()
 {
     win.setMouseCursorVisible(false);
-    win.setFramerateLimit(60);
+    win.setFramerateLimit(120);
 
     if (!icon.loadFromFile("Image/images.jpg"))
     {
@@ -250,13 +250,16 @@ int main()
     background.setTexture(&wallpaper_menu);
 
     //misic
-    Music main_menu;//создаем объект музыки
+    Music main_menu;
     main_menu.openFromFile("themes!/Toby-Fox-Dating-Start_.ogg");
     main_menu.setVolume(50);
     main_menu.play();
 
-    Music green_hill_zone;//создаем объект музыки
+    Music green_hill_zone;
     green_hill_zone.openFromFile("themes!/Green-Hill-Zone-Act-1.ogg");
+
+    Music GAME_OVER;
+    GAME_OVER.openFromFile("themes!/Undertale-Undertale-game-over-_1_.wav");
 
     //font for screen title
     Font type;
@@ -264,10 +267,10 @@ int main()
 
     //text with title
     Text titul;
-    titul.setFont(type); // шрифт
-    titul.setString(L"Sonic the Hedgehog"); // текст
-    titul.setCharacterSize(37); // размер шрифта
-    titul.setFillColor(Color(46, 210, 255)); // цвет текста
+    titul.setFont(type); 
+    titul.setString(L"Sonic the Hedgehog");
+    titul.setCharacterSize(37); 
+    titul.setFillColor(Color(46, 210, 255)); 
     titul.setOutlineThickness(2);
     titul.setOutlineColor(Color(0, 92, 173));
     titul.setPosition(320, 50);
@@ -300,10 +303,13 @@ int main()
     sprite_sonic_lives.setPosition(60, 610);
 
     Texture game_over;
-    game_over.loadFromFile("assets/game_over_1_.png");
+    game_over.loadFromFile("assets/OVER.png");
 
     Texture game_win;
     game_win.loadFromFile("assets/GoalSign.png");
+    Sprite game_win_sprite;
+    game_win_sprite.setTexture(game_win);
+    game_win_sprite.setPosition(9700, 422);
 
     Texture ground_texture;
     ground_texture.loadFromFile("assets/groundTile.png");
@@ -313,6 +319,11 @@ int main()
 
     Texture enemy_t;
     enemy_t.loadFromFile("assets/enemy.png");
+
+    Texture abs;
+    abs.loadFromFile("assets/background123.jpg");
+    Texture abs1;
+    abs1.loadFromFile("assets/background456.jpg");
 
 
 
@@ -344,7 +355,20 @@ int main()
     groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(11000.0f,450.0f))); //ground
     groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(10050.0f, 235.0f))); //wal
     groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(10200.0f, 235.0f))); //wal 
-
+    //LOSER
+    groundTiles.push_back(Ground(&game_over, Vector2f(1024.0f, 728.0f), Vector2f(-1000.0f, -5000.0f)));
+    groundTiles.push_back(Ground(&abs, Vector2f(1024.0f, 320.0f), Vector2f(0.0f, -150.0f)));
+    groundTiles.push_back(Ground(&abs, Vector2f(1024.0f, 320.0f), Vector2f(1024.0f, -150.0f)));
+    groundTiles.push_back(Ground(&abs, Vector2f(1024.0f, 320.0f), Vector2f(2048.0f, -150.0f)));
+    groundTiles.push_back(Ground(&abs, Vector2f(1024.0f, 320.0f), Vector2f(3072.0f, -150.0f)));
+    groundTiles.push_back(Ground(&abs, Vector2f(1024.0f, 320.0f), Vector2f(4096.0f, -150.0f)));
+    groundTiles.push_back(Ground(&abs, Vector2f(1024.0f, 320.0f), Vector2f(5120.0f, -150.0f)));
+    groundTiles.push_back(Ground(&abs, Vector2f(1024.0f, 320.0f), Vector2f(6144.0f, -150.0f)));
+    groundTiles.push_back(Ground(&abs, Vector2f(1024.0f, 320.0f), Vector2f(7168.0f, -150.0f)));
+    groundTiles.push_back(Ground(&abs, Vector2f(1024.0f, 320.0f), Vector2f(8192.0f, -150.0f)));
+    groundTiles.push_back(Ground(&abs, Vector2f(1024.0f, 320.0f), Vector2f(9216.0f, -150.0f)));
+    groundTiles.push_back(Ground(&abs, Vector2f(1024.0f, 320.0f), Vector2f(10240.0f, -150.0f)));
+    groundTiles.push_back(Ground(&abs, Vector2f(1024.0f, 320.0f), Vector2f(11264.0f, -150.0f)));
 
 
 
@@ -352,10 +376,31 @@ int main()
     std::vector <Enemy*> enemy_vec;
     Enemy enemy1(Enemy(&enemy_t, Vector2f(123.0f, 90.0f), Vector2u(3, 1), 0.3f, 40.0f));
     Enemy enemy2(Enemy(&enemy_t, Vector2f(123.0f, 90.0f), Vector2u(3, 1), 0.3f, 40.0f));
+    Enemy enemy3(Enemy(&enemy_t, Vector2f(123.0f, 90.0f), Vector2u(3, 1), 0.3f, 40.0f));
+    Enemy enemy4(Enemy(&enemy_t, Vector2f(123.0f, 90.0f), Vector2u(3, 1), 0.3f, 40.0f));
+    Enemy enemy5(Enemy(&enemy_t, Vector2f(123.0f, 90.0f), Vector2u(3, 1), 0.3f, 40.0f));
+    Enemy enemy6(Enemy(&enemy_t, Vector2f(123.0f, 90.0f), Vector2u(3, 1), 0.3f, 40.0f));
+    Enemy enemy7(Enemy(&enemy_t, Vector2f(123.0f, 90.0f), Vector2u(3, 1), 0.3f, 40.0f));
+    Enemy enemy8(Enemy(&enemy_t, Vector2f(123.0f, 90.0f), Vector2u(3, 1), 0.3f, 40.0f));
+    Enemy enemy9(Enemy(&enemy_t, Vector2f(123.0f, 90.0f), Vector2u(3, 1), 0.3f, 40.0f));
     enemy1.set_position({900, 550});
-    enemy2.set_position({460, 550});
+    enemy2.set_position({350, 600});
+    enemy3.set_position({ 1250, 520 });
+    enemy4.set_position({ 2500, 200 });
+    enemy5.set_position({ 3600, 500 });
+    enemy6.set_position({ 4500, 200 });
+    enemy7.set_position({ 7000, 300 });
+    enemy8.set_position({ 6000, 300 });
+    enemy9.set_position({ 7800, 300 });
     enemy_vec.push_back(&enemy1);
     enemy_vec.push_back(&enemy2);
+    enemy_vec.push_back(&enemy3);
+    enemy_vec.push_back(&enemy4);
+    enemy_vec.push_back(&enemy5);
+    enemy_vec.push_back(&enemy6);
+    enemy_vec.push_back(&enemy7);
+    enemy_vec.push_back(&enemy8);
+    enemy_vec.push_back(&enemy9);
 
 
 
@@ -509,13 +554,13 @@ int main()
     coin_sound.setBuffer(coin_buffer);
 
 
-    SoundBuffer jump_biffer;
-    Sound jump_sound;
-    if (!jump_biffer.loadFromFile("themes!/jump.wav"))
+    SoundBuffer jump_on_robot_buffer;
+    Sound jump_on_robot_sound;
+    if (!jump_on_robot_buffer.loadFromFile("themes!/jump-on-spring.wav"))
     {
-        std::cout << "Failed to load jump sound." << std::endl;
+        std::cout << "FAILLL." << std::endl;
     }
-    jump_sound.setBuffer(jump_biffer);
+    jump_on_robot_sound.setBuffer(jump_on_robot_buffer);
 
     //_____________________________________________________________________________
     Font font_for_all;
@@ -534,15 +579,43 @@ int main()
     text_rings_count.setOutlineColor(Color(0, 0, 0));
     text_rings_count.setOutlineThickness(1);
     text_rings_count.setString(ssRings.str());
-    text_rings_count.setPosition(40, 20);
+    text_rings_count.setPosition(9900, 300);
 
 
 
     //time and speed ---------------------------------------------------
     int increSecs = 0;
-    int secs = 0;
-    int mins = 0;
     int score = 0;
+
+    Text WIN;
+    std::ostringstream ssWIN;
+    ssWIN << "CONGRATULATIONS!!";
+    WIN.setFont(font_for_all);
+    WIN.setFillColor(Color::White);
+    WIN.setOutlineColor(Color(0, 0, 0));
+    WIN.setOutlineThickness(1);
+    WIN.setString(ssWIN.str());
+    WIN.setPosition(9900, 200);
+    
+    Text WIN1;
+    std::ostringstream ssWIN1;
+    ssWIN1 << "YOU PASSED THE MAP";
+    WIN1.setFont(font_for_all);
+    WIN1.setFillColor(Color::White);
+    WIN1.setOutlineColor(Color(0, 0, 0));
+    WIN1.setOutlineThickness(1);
+    WIN1.setString(ssWIN1.str());
+    WIN1.setPosition(9900, 230);
+
+    Text OVER_R;
+    std::ostringstream ssOVER_R;
+    ssOVER_R << "PRESS C TO RESTART   AND   PRESS M TO EXIT TO THE MAIN MENU";
+    OVER_R.setFont(font_for_all);
+    OVER_R.setFillColor(Color::White);
+    OVER_R.setOutlineColor(Color(0, 0, 0));
+    OVER_R.setOutlineThickness(1);
+    OVER_R.setString(ssOVER_R.str());
+    OVER_R.setPosition(100, 300);
 
     Text text_score_board;
     std::ostringstream ssScore;
@@ -552,7 +625,7 @@ int main()
     text_score_board.setOutlineColor(Color(0, 0, 0));
     text_score_board.setOutlineThickness(1);
     text_score_board.setString(ssScore.str());
-    text_score_board.setPosition(40, 60);
+    text_score_board.setPosition(9900, 330);
 
     //lives--------------------------------------------------------------
     int lives = 3;
@@ -566,8 +639,9 @@ int main()
     text_live.setString(ssLives.str());
     text_live.setPosition(72, 610);
 
-    View view(Vector2f(0.0f, 0.0f), Vector2f(CAMERA_HEIGHT, CAMERA_HEIGHT * 0.7));
+    View view(Vector2f(0.0f, 0.0f), Vector2f(CAMERA_HEIGHT, CAMERA_HEIGHT * 0.8));
     bool volume_set = true;
+    int count = 100;
     while (win.isOpen())
     {
         while (win.pollEvent(event))
@@ -607,10 +681,7 @@ int main()
                     if (rings->get_collider().check_collision(player.GetCollider(), direction, 1.0f)) {
                         player.on_collision(direction);
                         rings_count = rings_count + 1;
-                        rings->set_position({
-                            1000,
-                            4002
-                            }); //throws coin away
+                        rings->set_position({1000, 4002}); //throws coin away
                         coin_sound.play();
                         coin_sound.setVolume(100);
                     }
@@ -619,30 +690,26 @@ int main()
                     text_rings_count.setString(ssRings.str());
                 }
 
-                for (Enemy* enemies : enemy_vec) {
+                for (Enemy* enemies : enemy_vec)
+                {
                     enemies->update(deltaTime);
 
                     for (Ground& ground : groundTiles) {
-                        if (ground.get_collider().check_collision(enemies->get_collider(), direction, 1.0f)) {
-                            enemies->on_collision(direction);
-                        }
+                        if (ground.get_collider().check_collision(enemies->get_collider(), direction, 1.0f)) enemies->on_collision(direction);
                     }
                     if (enemies->get_collider().check_collision(player.GetCollider(), direction, 1.0f)) {
-                        if (player.can_jump == false) {
+                        if (player.can_jump == false)
+                        {
                             player.on_collision(direction);
                             score = score + 100;
-                            enemies->set_position({
-                                1000,
-                                4002
-                                }); //throws enemy away
+                            enemies->set_position({1000, 4002}); //throws enemy away
+                            jump_on_robot_sound.play();
                         }
-                        else {
+                        else
+                        {
                             player.on_collision(direction);
                             score = 0;
-                            player.setPos({
-                                0,
-                                685
-                                });
+                            player.setPos({0,685});
                             lives = lives - 1;
                         }
                     }
@@ -653,41 +720,15 @@ int main()
                     ssLives << lives;
                     text_live.setString(ssLives.str());
                 }
-                if (increSecs <= 60) {
-                    increSecs++;
-                }
-                if (increSecs == 60) {
-                    secs = secs + 1;
-                    increSecs = 0;
-                }
-                if (secs == 60) {
-                    mins = mins + 1;
-                    secs = 0;
-                }
-                std::string m = std::to_string(mins);
-                std::string s = std::to_string(secs);
-
-                std::string timer = m + ":" + s;
-                if (rings_count == 50) {
-                    player.setPos({
-                        -1000,
-                        -3820
-                        });
-
-                }
-                std::ostringstream ssTime;
-                ssTime << "TIME: " << timer;
-                Text time;
-                time.setFont(font_for_all);
-                time.setFillColor(Color::Yellow);
-                time.setString(ssTime.str());
-                time.setPosition(-125.0f, 650.0f);
-                if (lives <= 0) {
+                if (lives == 0) 
+                {
                     player.game_over = 1;
-                    player.setPos({
-                        -100,
-                        -382
-                        }); //throws player away
+                    player.setPos({-1000,-5000}); //throws player away
+                    green_hill_zone.stop();
+                    if (GAME_OVER.getStatus() != Music::Playing)
+                    {
+                        GAME_OVER.play();
+                    };
                 }
                 win.setView(view);
                 view.setCenter(player.get_pos());
@@ -705,10 +746,12 @@ int main()
                     it->Draw(win);
                 }
                 player.Draw(win);
-                win.draw(time);
                 win.draw(text_score_board);
                 win.draw(text_rings_count);
                 win.draw(text_live);
+                win.draw(game_win_sprite);
+                win.draw(WIN);
+                win.draw(WIN1);
                 win.display();
             }
         }
