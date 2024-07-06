@@ -22,6 +22,8 @@ Player::Player(Texture* texture, Vector2u image_count, float switch_time, float 
 	body.setPosition(50.0f, 600.0f);
 	body.setTexture(texture);
 	body.setOrigin(body.getSize() / 2.0f);
+	if (!jump_buffer.loadFromFile("themes!/jump.wav")) std::cout << "FAIL";
+	jump_sound.setBuffer(jump_buffer);
 }
 
 Player::~Player() {}
@@ -36,6 +38,7 @@ void Player::update(float delta_time)
 		/*if (game_over == 1) PlaySound(TEXT("Undertale-Undertale-game-over.wav"), NULL, SND_FILENAME | SND_ASYNC);*/
 		can_jump = false;
 		velocity.y = -sqrtf(2.0f * 981.0f * jump_height);
+		jump_sound.play();
 	}
 	velocity.y += 981.0f * delta_time;
 	if (velocity.x == 0.0f) row = 0;

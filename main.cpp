@@ -504,9 +504,18 @@ int main()
     Sound coin_sound;
     if (!coin_buffer.loadFromFile("themes!/collecting-coins.wav"))
     {
-        std::cout << "Не удалось загрузить звук сбора монет." << std::endl;
+        std::cout << "Could not load coin collecting sound." << std::endl;
     }
     coin_sound.setBuffer(coin_buffer);
+
+
+    SoundBuffer jump_biffer;
+    Sound jump_sound;
+    if (!jump_biffer.loadFromFile("themes!/jump.wav"))
+    {
+        std::cout << "Failed to load jump sound." << std::endl;
+    }
+    jump_sound.setBuffer(jump_biffer);
 
     //_____________________________________________________________________________
     Font font_for_all;

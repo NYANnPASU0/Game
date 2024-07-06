@@ -26,6 +26,8 @@ private:
 	bool face_right;
 	Vector2f velocity;
 	float jump_height;
+	SoundBuffer jump_buffer;
+	Sound jump_sound;
 
 public:
 	Player(Texture* texture, Vector2u image_count, float switch_time, float speed, float jump_height);
