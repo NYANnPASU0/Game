@@ -8,8 +8,6 @@
 #include <string>
 #include <sstream>
 #include<list>
-#include "Ground.h"
-#include "Coins.h"
 #include <Windows.h>
 #include <MMSystem.h>
 
@@ -17,14 +15,23 @@ using namespace sf;
 
 class Collision
 {
+
 private:
 	RectangleShape& body;
-
 public:
 	Collision(RectangleShape& body);
-	bool check_collision(Collision& other, Vector2f& direction, float push); //wall is 0, a light object would be 1
-	void move(float dx, float dy);
-	Vector2f get_position_coll();
-	Vector2f get_half_size();
 	~Collision();
+	bool check_collision(Collision& other, Vector2f& direction, float push);
+	void Move(float dx, float dy)
+	{
+		body.move(dx, dy);
+	}
+	Vector2f get_position_coll()
+	{
+		return body.getPosition();
+	}
+	Vector2f get_half_size()
+	{
+		return body.getSize() / 2.0f;
+	}
 };

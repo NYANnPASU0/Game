@@ -5,12 +5,10 @@
 #include <iostream>
 #include <vector>
 #include <set>
+#include "Collision.h"
 #include <string>
 #include <sstream>
 #include<list>
-#include "Ground.h"
-#include "Coins.h"
-#include "Collision.h"
 #include <Windows.h>
 #include <MMSystem.h>
 
@@ -20,11 +18,20 @@ class Coin
 {
 private:
 	RectangleShape body;
+
 public:
 	Coin(Texture* texture, Vector2f size);
-	void draw(RenderWindow& win);
 	~Coin();
-	void set_pos(sf::Vector2f newPos);
-	Collision get_collider();
-	FloatRect get_globalbounds();
+	void Draw(RenderWindow& win);
+	Collision get_collider() {
+		return Collision(body);
+	}
+	FloatRect get_global_bounds()
+	{
+		return body.getGlobalBounds();
+	}
+	void set_position(sf::Vector2f newPos)
+	{
+		body.setPosition(newPos);
+	}
 };

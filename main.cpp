@@ -7,19 +7,20 @@
 #include <string>
 #include <sstream>
 #include<list>
-#include "Ground.h"
-#include "Coins.h"
-#include "Collision.h"
-#include "Animation.h"
-#include "PLayer.h"
 #include <Windows.h>
 #include <MMSystem.h>
+#include "Ground.h"
+#include "Collision.h"
+#include "Coin.h"
+#include "Animation.h"
+#include "Enemys.h"
+#include "Player.h"
 
 using namespace sf;
 
 Image icon, sonic_sprite;
 Texture texture;
-Sprite player;
+static const float CAMERA_HEIGHT = 960.0f;
 
 RenderWindow win(VideoMode(960, 672), "Sonic the Hedgehog");
 Event event;
@@ -44,7 +45,6 @@ void open_image_while_exit() //function for a sonic meme when their game comes o
             if (imageEvent.type == Event::Closed)
                 imageWindow.close();
         }
-
         imageWindow.clear();
         imageWindow.draw(imageSprite);
         imageWindow.display();
@@ -270,14 +270,19 @@ int main()
     static int selectedMenuItem = 0;
     Clock clock;
     bool GAME_START_MENU = true;
+    float deltaTime = 0.0f;
 
 
+    Texture background_t;
+    background_t.loadFromFile("assets/background.png");
+    RectangleShape background1(Vector2f(12288, 728));
+    background1.setTexture(&background_t);
+    background1.setOrigin(700, 0);
 
 
 
     Texture sonic;
     sonic.loadFromFile("assets/sonic_square.png");
-    Player player(&sonic, Vector2u(3, 3), 0.3f, 400.0f, 200.0f);
 
     Texture sonic_lives;
     sonic_lives.loadFromFile("assets/sonic_live_ñount.png");
@@ -285,25 +290,41 @@ int main()
     Texture game_over;
     game_over.loadFromFile("assets/game_over_1_.png");
 
+    Texture game_win;
+    game_win.loadFromFile("assets/win (1)(1).png");
+
     Texture ground_texture;
     ground_texture.loadFromFile("assets/groundTile.png");
 
     Texture wall_texture;
     wall_texture.loadFromFile("assets/WallSprite.png");
 
+    Texture enemy_t;
+    enemy_t.loadFromFile("assets/enemy.png");
+
+
+
+    std::vector <Ground> groundTiles;
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(0.0f, 630.0f))); //ground
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(1180.0f, 630.0f))); //ground
+    groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(1536.0f, 768.0f))); //ground
+    //groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(2536.0f, 768.0f))); //ground
+    //groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(-55.0f, 528.0f))); //wall at start of level
+    //groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(1024.0f, 828.0f))); //wall2
+    //groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(1424.0f, 728.0f))); //wall3
+    //groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(1724.0f, 928.0f))); //wall4
+    //groundTiles.push_back(Ground(&wall_texture, Vector2f(159.0f, 562.0f), Vector2f(2100.0f, 528.0f))); 
+    //groundTiles.push_back(Ground(&sonic_lives, Vector2f(96.0f, 32.0f), Vector2f(60.0f, 620.0f)));
+    //groundTiles.push_back(Ground(&ground_texture, Vector2f(1024.0f, 84.0f), Vector2f(-100, -402))); 
+    //groundTiles.push_back(Ground(&game_over, Vector2f(1024.0f, 728.0f), Vector2f(-100, -402))); //gamer over
+    //groundTiles.push_back(Ground(&game_win, Vector2f(1024.0f, 728.0f), Vector2f(-1000, -3820))); //gamer won 
 
 
 
 
-
-    std::vector<Ground>Ground_Green_Hill_Zone;
-    //_____________________________________________________________________________
-    Font font_for_all;
-    if (!font_for_all.loadFromFile("font/font_for_rings.ttf")) return 5;
-    //_____________________________________________________________________________
-    //rings--------------------------------------------------------------------------
     Texture rings;
     rings.loadFromFile("assets/ring.png");
+    std::vector <Coin*> rings_vect;
     Coin coin1(Coin(&rings, Vector2f(50.0f, 50.0f)));
     Coin coin2(Coin(&rings, Vector2f(50.0f, 50.0f)));
     Coin coin3(Coin(&rings, Vector2f(50.0f, 50.0f)));
@@ -312,35 +333,42 @@ int main()
     Coin coin6(Coin(&rings, Vector2f(50.0f, 50.0f)));
     Coin coin7(Coin(&rings, Vector2f(50.0f, 50.0f)));
     Coin coin8(Coin(&rings, Vector2f(50.0f, 50.0f)));
+    coin1.set_position({300, 550});
+    coin2.set_position({900, 550});
+    coin3.set_position({700, 550 });
+    coin4.set_position({800, 550 });
+    coin5.set_position({1200, 550 });
+    coin6.set_position({1300, 550 });
+    coin7.set_position({1850, 550 });
+    coin8.set_position({1950, 550 });
+    rings_vect.push_back(&coin1);
+    rings_vect.push_back(&coin2);
+    rings_vect.push_back(&coin3);
+    rings_vect.push_back(&coin4);
+    rings_vect.push_back(&coin5);
+    rings_vect.push_back(&coin6);
+    rings_vect.push_back(&coin7);
+    rings_vect.push_back(&coin8);
 
 
-    std::vector<Coin*>Rings_Green_Hill_Zone;
-    Rings_Green_Hill_Zone.push_back(&coin1);
-    Rings_Green_Hill_Zone.push_back(&coin2);
-    Rings_Green_Hill_Zone.push_back(&coin3);
-    Rings_Green_Hill_Zone.push_back(&coin4);
-    Rings_Green_Hill_Zone.push_back(&coin5);
-    Rings_Green_Hill_Zone.push_back(&coin6);
-    Rings_Green_Hill_Zone.push_back(&coin7);
-    Rings_Green_Hill_Zone.push_back(&coin8);
+    //_____________________________________________________________________________
+    Font font_for_all;
+    if (!font_for_all.loadFromFile("font/font_for_rings.ttf")) return 5;
+    //_____________________________________________________________________________
+    //rings--------------------------------------------------------------------------
+
 
     int rings_count = 0;
 
-    Text text_Rings;
-    text_Rings.setFont(font_for_all);
-    text_Rings.setFillColor(Color::Yellow);
-    text_Rings.setString("RINGS:");
-    text_Rings.setPosition(40, 20);
-
     Text text_rings_count;
-    text_rings_count.setFont(font_for_all);
-    text_rings_count.setFillColor(Color::White); 
     std::ostringstream ssRings;
-    ssRings << rings_count;
+    ssRings << "RINGS:" << rings_count;
+    text_rings_count.setFont(font_for_all);
+    text_rings_count.setFillColor(Color::Yellow);
+    text_rings_count.setOutlineColor(Color(0, 0, 0));
+    text_rings_count.setOutlineThickness(1);
     text_rings_count.setString(ssRings.str());
-    text_rings_count.setPosition(text_Rings.getGlobalBounds().width + text_Rings.getPosition().x + 30, 20);
-
-
+    text_rings_count.setPosition(40, 20);
 
 
 
@@ -350,29 +378,30 @@ int main()
     int mins = 0;
     int score = 0;
 
-    Text text_score;
-    text_score.setFont(font_for_all);
-    text_score.setFillColor(Color::Yellow);
-    text_score.setString("SCORE:");
-    text_score.setPosition(40, 60);
-
     Text text_score_board;
-    text_score_board.setFont(font_for_all);
-    text_score_board.setFillColor(Color::White);
     std::ostringstream ssScore;
-    ssScore << score;
+    ssScore << "SCORE:" << score;
+    text_score_board.setFont(font_for_all);
+    text_score_board.setFillColor(Color::Yellow);
+    text_score_board.setOutlineColor(Color(0, 0, 0));
+    text_score_board.setOutlineThickness(1);
     text_score_board.setString(ssScore.str());
-    text_score_board.setPosition(text_score.getGlobalBounds().width + text_score.getPosition().x + 30, 60);
+    text_score_board.setPosition(40, 60);
 
     //lives--------------------------------------------------------------
     int lives = 3;
     Text text_live;
     std::ostringstream ssLives;
-    ssLives << "LIVES:" << lives;
+    ssLives << lives;
     text_live.setFont(font_for_all);
     text_live.setFillColor(Color::White);
+    text_live.setOutlineColor(Color(69, 69, 69));
+    text_live.setOutlineThickness(1);
     text_live.setString(ssLives.str());
-    text_live.setPosition(40, 600);
+    text_live.setPosition(72, 610);
+
+    View view(Vector2f(0.0f, 0.0f), Vector2f(CAMERA_HEIGHT, CAMERA_HEIGHT * 0.7));
+    view.setCenter(Vector2f(width / 2, height / 2));
 
     while (win.isOpen())
     {
@@ -396,22 +425,22 @@ int main()
                 {
                     green_hill_zone.play();
                 }
-                Vector2f direction; //direction into player on collision func
-                for (int i = 0; i < Ground_Green_Hill_Zone.size(); i++) {
-                    Ground& ground = Ground_Green_Hill_Zone[i];
-                    if (ground.get_collider().check_collision(player.cet_collider(), direction, 1.0f)) {
-                        player.OnCollision(direction);
-                    }
+                win.setView(view);
+                win.draw(background1);
+                for (std::vector<Coin*>::iterator it = rings_vect.begin(); it != rings_vect.end(); ++it)
+                {
+                    (*it)->Draw(win);
                 }
-
-                win.draw(text_Rings);
-                win.draw(text_rings_count);
-                win.draw(text_score);
+                for (std::vector<Ground>::iterator it = groundTiles.begin(); it != groundTiles.end(); ++it)
+                {
+                    it->Draw(win);
+                }
                 win.draw(text_score_board);
+                win.draw(text_rings_count);
                 win.draw(text_live);
                 win.display();
+
             }
         }
     }
-    return 0;
 }

@@ -1,4 +1,7 @@
 #pragma once
+#include "Animation.h"
+#include "Collision.h"
+#include "Coin.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/System/Clock.hpp>
@@ -8,10 +11,6 @@
 #include <string>
 #include <sstream>
 #include<list>
-#include "Ground.h"
-#include "Coins.h"
-#include "Collision.h"
-#include "Animation.h"
 #include <Windows.h>
 #include <MMSystem.h>
 
@@ -24,23 +23,35 @@ private:
 	Animation animation;
 	unsigned int row;
 	float speed;
-	bool faceRight;
+	bool face_right;
 	Vector2f velocity;
 	float jump_height;
 
 public:
-
-	bool is_idle = true; //he isn't moving and can run the animation of an idle position 
+	Player(Texture* texture, Vector2u image_count, float switch_time, float speed, float jump_height);
+	~Player();
+	void update(float delta_time);
+	void Draw(RenderWindow& win);
+	void on_collision(Vector2f direction);
+	bool is_idle = true;
 	bool can_jump;
 	int game_over = 0;
+	Vector2f get_pos()
+	{
+		return body.getPosition();
+	}
+	Collision GetCollider()
+	{
+		return Collision(body);
+	}
 
-	Player(Texture* texture, Vector2u image_count, float switch_time, float speed, float jump_height);
-	void Update(float delta_time);
-	void Draw(RenderWindow& win);
-	void On_collision(Vector2f direction);
-	Vector2f Getter_pos();
-	Collision Get_collider();
-	bool Colliding_with_coin(Coin* body);
-	void Set_pos(sf::Vector2f new_pos);
-	~Player();
+	bool isCollidingWithCoin(Coin* body)
+	{
+		if (Player::body.getGlobalBounds().intersects(body->get_global_bounds())) return true;
+		return false;
+	}
+	void setPos(sf::Vector2f new_pos)
+	{
+		body.setPosition(new_pos);
+	}
 };

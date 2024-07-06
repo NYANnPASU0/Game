@@ -8,15 +8,11 @@
 #include <string>
 #include <sstream>
 #include<list>
-#include "Ground.h"
-#include "Coins.h"
-#include "Collision.h"
 #include <Windows.h>
 #include <MMSystem.h>
+#include "Collision.h"
 
 using namespace sf;
-
-//pos - position
 
 class Ground
 {
@@ -24,7 +20,10 @@ private:
 	RectangleShape body;
 public:
 	Ground(Texture* texture, Vector2f size, Vector2f pos);
-	void draw(RenderWindow& win);
-	Collision get_collider();
 	~Ground();
+	void Draw(RenderWindow& win);
+	Collision get_collider()
+	{
+		return Collision(body);
+	}
 };
